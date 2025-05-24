@@ -90,8 +90,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'nibedok',
         'USER': 'postgres',
-        'PASSWORD': 'rathin',
-        'HOST': 'localhost',
+        # 'PASSWORD': 'rathin',
+        'PASSWORD': 'rathin2025',
+        # 'HOST': 'localhost',
+        'HOST': 'nibedok.cpki84qomvcq.eu-north-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
