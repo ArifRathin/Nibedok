@@ -1,0 +1,48 @@
+{% extends 'front-end/base.html' %}
+{% block title %}
+    Products Shown
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <span>For the post <a class="text-dark" href="{% url 'buyer-post-details' buyer_post.post_code_name %}">{% if buyer_post.title|length > 10 %}{{buyer_post.title|slice:":10"}}...{% else %}{{buyer_post.title}}{% endif %}</a></span>
+        <span class="h4">products shown to me...</span>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <table class="table table-striped">
+                <thead>
+                    <th>Photo</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Delivery Time</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    {% for offer in seller_offers %}
+                    <tr>
+                        <td>
+                            {% if offer.photos|length > 0 %}
+                                {% for photo in offer.photos|slice:":1" %}
+                                    <a class="text-dark" href="{% url 'offered-prod-details' offer.offer_code_name %}"><img class="img img-responsive img-fluid" style="width:80px;" src="/media/{{photo.photo}}" alt=""></a>
+                                {% endfor %}
+                            {% else %}
+                                <span><small class="fst-italic">No photos</small></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="text-dark" href="{% url 'offered-prod-details' offer.offer_code_name %}"><span>{% if offer.offer_msg|length > 20 %}{{ offer.offer_msg|slice:":20" }}...{% else %}{{offer.offer_msg}}{% endif %}</span></a>
+                        </td>
+                        <td>{{offer.price}} {{offer.currency.code}}</td>
+                        <td>{{offer.estimated_delivery_time}} {% if offer.estimated_delivery_time > 1 %}Days{% else %}Day{% endif %}</td>
+                        <td>
+                            <a class="text-dark" href="{% url 'conversation' offer.user.channel_group_name %}">Send Message</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

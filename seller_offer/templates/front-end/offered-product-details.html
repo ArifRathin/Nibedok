@@ -1,0 +1,33 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <small>Shown product for </small><a class="text-dark h3" href="{% url 'buyer-post-details' offer.buyer_post.post_code_name %}">{% if offer.buyer_post.title|length > 20 %}{{offer.buyer_post.title|slice:":20"}}...{% else %}{{offer.buyer_post.title}}{% endif %}</a>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <p>
+                <span class="h4 text-capitalize">{{ offer.user.first_name }} {{ offer.user.last_name }}</span><br>
+                <span class="text-muted h6">{{offer.created_at}}</span>
+            </p>
+            {% for photo in offer.photos %}
+                <a href="/media/{{photo.photo}}" target="_blank"><img class="img img-fluid" src="/media/{{photo.photo}}" style="width: 80px;" alt=""></a>
+            {% endfor %}
+            <div>
+                <p>
+                    {{offer.offer_msg}}
+                </p>
+            </div>
+            <div>
+                <span class="fw-bold">Price: </span><span>{{offer.price}} {{offer.currency.code}}</span>
+                <span class="fw-bold">Delivery in: </span><span>{{offer.estimated_delivery_time}} Days</span>
+            </div>
+            <div>
+                {% if request.user.id != offer.user.id %}
+                    <a class="form-control btn btn-dark" href="{% url 'conversation' offer.user.channel_group_name %}">Send Message</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

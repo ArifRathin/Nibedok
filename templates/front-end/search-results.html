@@ -1,0 +1,57 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <span class="h5">Search Results</span>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <table class="table table-striped">
+                <thead>
+                    <th>Photo</th>
+                    <th>Product</th>
+                    <th>Description</th>
+                </thead>
+                <tbody>
+                    {% for result in search_results %}
+                        <tr>
+                            <td>
+                                {% for photo in result.sample_photos|slice:":1" %}
+                                    <a class="text-dark" href="{% url 'buyer-post-details' result.post_code_name %}"><img src="/media/{{photo.photo}}" alt="" style="width: 80px;"></a>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <a class="text-dark" href="{% url 'buyer-post-details' result.post_code_name %}"><span>{{result.title}}</span></a>
+                            </td>
+                            <td>
+                                {% if result.description|length > 200 %}{{result.description|slice:":200"}}...{% else %}{{result.description}}{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if search_results|length > 9 %}
+        <div class="row">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                      {% if search_results.has_previous %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{search_results.previous_page_number}}">Previous</a></li>
+                      {% endif %}
+                      {% if search_results.has_previous %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{search_results.previous_page_number}}">{{search_results.previous_page_number}}</a></li>
+                      {% endif %}
+                      <li class="page-item active"><a class="page-link bg-dark border border-dark" href="?page={{search_results.number}}">{{search_results.number}}</a></li>
+                      {% if search_results.has_next %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{search_results.next_page_number}}">{{search_results.next_page_number}}</a></li>
+                      {% endif %}
+                      {% if search_results.has_next %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{search_results.next_page_number}}">Next</a></li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

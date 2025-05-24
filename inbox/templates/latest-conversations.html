@@ -1,0 +1,19 @@
+{% for conversation in conversations %}
+    <a class="text-dark text-decoration-none" href="{% if conversation.lastMessage.receiver == current_user_id %}{% url 'conversation' name=conversation.lastMessage.senderInfo.channel_group_name %}{% else %}{% url 'conversation' name=conversation.lastMessage.receiverInfo.channel_group_name %}{% endif %}">
+    <div class="bg-secondary-subtle {% if conversation.convStatus.last_receiver_id == current_user_id and conversation.convStatus.has_unread_msg %}bg-dark-subtle{% endif %}" id="id-inbox{% if conversation.lastMessage.receiver == current_user_id %}{{conversation.lastMessage.senderInfo.channel_group_name}}{% else %}{{conversation.lastMessage.receiverInfo.channel_group_name}}{% endif %}">
+        {% if conversation.lastMessage.receiver == current_user_id %}
+            <span class="h5 text-capitalize">{{conversation.lastMessage.senderInfo.first_name}} {{conversation.lastMessage.senderInfo.last_name}}</span>
+        {% else %}
+            <span class="h5 text-capitalize">{{conversation.lastMessage.receiverInfo.first_name}} {{conversation.lastMessage.receiverInfo.last_name}}</span>
+        {% endif %}
+        <span><small>{{conversation.last_message}}</small></span>
+        {% if conversation.lastMessage.sender == current_user_id %}
+            <p>You: {{conversation.lastMessage.text}}</p>
+        {% else %}
+            <p>{{conversation.lastMessage.text}}</p>
+        {% endif %}
+        <hr>
+    </div>
+    </a>
+{% endfor %}
+<p class="text-center"><a class="text-dark" href="{% url 'conversation' name='all_msgs' %}">All Conversations</a></p>

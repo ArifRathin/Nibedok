@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>
+            Post Wise Offers
+        </title>
+    </head>
+    <body>
+        <div>
+            <h2>{{seller_offers.0.buyer_post.title}}</h2>
+            <table>
+                <thead>
+                    <th>Offer</th>
+                    <th>Price</th>
+                    <th>Delivery Time</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    {% for offer in seller_offers %}
+                        <tr>
+                            <td>{{offer.offer_msg}}</td>
+                            <td>{{offer.price}} {{offer.currency.name}}</td>
+                            <td>{{offer.estimated_delivery_time}} Day(s)</td>
+                            <td>
+                                <a href="{% url 'conversation' offer.user.channel_group_name %}">Send Message</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,62 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid my-3">
+    <div class="row text-center my-3">
+        {% for message in messages %}
+        <div class="col-lg-6 col-md-6 mx-auto">
+            {% if message.extra_tags == 'error-verification' %}
+                <div class="badge bg-danger py-4 w-100">
+                    {{message}}
+                </div>
+            {% elif message.extra_tags == 'error' %}
+                <div class="badge bg-danger py-4 w-100">
+                    {{message}}
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row my-1 text-center">
+        <p id="id-instructions" class="h5">
+            {% if messages|length > 0 %}
+                If you haven't received your security code yet, please click <a class="text-dark fw-bold" href="{% url 'send-verification-code' %}">here</a>
+            {% else %}
+                You will receive a security code in your email within the next <span id="id-seconds"></span> seconds</span>
+            {% endif %}
+        </p>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 mx-auto px-3">
+            <form id="id-enter-code-form" class="form-group" action="{% url 'verify-account' %}" method="POST">
+                {% csrf_token %}
+                <input class="form-control" type="hidden" name="email" value="{{email_id}}">
+                <input class="form-control my-2" name="security_code" type="password" placeholder="Enter security code">
+                <div id="id-enter-code-div" class="my-2 text-center">
+                    <button class="btn btn-dark form-control" onclick="processBtn();">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    function processBtn(){
+        $('#id-enter-code-div').html('<span class="fst-italic text-muted">Processing...</span>');
+        $('#id-enter-code-form').submit();
+    }
+    var mail_time_counter = setInterval(count_manager,1000);
+    var remaining = 15;
+    function count_manager(){
+        remaining -= 1;
+        $('#id-seconds').html(remaining);
+        if(remaining == 0){
+            var alternative_url = "{% url 'send-verification-code' %}";
+            $('#id-instructions').html('If you haven\'t received your security code yet, please click <a class="text-dark fw-bold" href="'+alternative_url+'">here</a>');
+        }
+    }
+    function stopCounter(){
+        clearInterval(mail_time_counter);
+    }
+</script>
+{% endblock %}

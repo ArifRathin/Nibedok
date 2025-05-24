@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>
+            Seller offer
+        </title>
+    </head>
+    <body>
+        <div>
+            <form action="{% url 'create-seller-offer' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="buyer_post_id" value="{{buyer_post_id}}">
+                {{sample_photo_form}}
+                {{create_form}}
+                <input type="submit" value="Send Offer">
+            </form>
+        </div>
+    </body>
+</html>

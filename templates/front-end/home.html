@@ -1,0 +1,194 @@
+{% extends 'front-end/base.html' %}
+{% block title %}
+Home
+{% endblock %}
+{% block content %}
+<div class="mt-2 text-center" style="height: 100px;background-color: #8B0000;">
+            <p class="mb-1"><small class="fst-italic text-white">Post what you are looking for...</small></p>
+            {% if request.user.is_authenticated %}
+                <a class="btn btn-light fw-bold" href="{% url 'create-buyer-post' %}">I am looking for...</a>
+            {% else %}
+                <a class="btn btn-light fw-bold"  href="javascript:void(0)" onclick="setNextPage('{% url 'create-buyer-post' %}');" data-bs-toggle="modal" data-bs-target="#loginModal">I am looking for...</a>
+            {% endif %}
+        </div>
+        <div class="container-fluid my-3">
+            <div class="row text-center mb-3">
+                <span class="h1">People are looking for...</span>
+            </div>
+            <div class="row text-center mb-3">
+                <div class="col-lg-6 mx-auto">
+                    <select class="form-control" onchange="prodsByCat(this)" name="" id="">
+                        <option {% if slug == 'all-categories' %}selected{% endif %} value="all-categories">All Categories</option>
+                        {% for category in categories %}
+                            <option {% if slug == category.slug %}selected{% endif %} value="{% url 'prods-by-cat' category.slug %}">{{category.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            {% if posts|length == 0 %}
+            <div class="row text-center">
+                <span class="text-muted h5 fw-bold">No post at the moment :(</span>
+            </div>
+            {% endif %}
+            {% for post in posts %}
+            <div class="row my-3">
+                <div class="col-lg-5 mx-auto rounded border border-2 border-dark">
+                    <p class="fw-bold mb-1 mt-2">
+                        <!-- <span class="text-capitalize">{{post.user.first_name}} {{post.user.last_name}}</span><br> -->
+                        
+                        <!-- <small class="fst-italic text-muted" style="font-size: 12px;">{{post.state_district}}, {{post.country.name}}</small><br> -->
+                        <small class="fst-italic text-muted" style="font-size: 12px;">{{post.created_at}}</small>
+                        {% if post.user.id == request.user.id %}
+                            <span class="float-end badge bg-main-theme">Own Post</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-center h5">
+                        {{post.title}}
+                    </p>
+                    <p>
+                        {% if post.description|length > 200 %}
+                            <span id="id-show-less{{post.id}}">
+                                {{post.description|slice:':197'}}...<a class="text-dark text-decoration-none fw-bold" href="javascript:void(0)" onclick="showMore('{{post.id}}');">Show more</a>
+                            </span>
+                        {% else %}
+                            {{post.description}}
+                        {% endif %}
+                        <span id="id-show-more{{post.id}}" class="d-none">
+                            {{post.description}}...<a class="text-dark text-decoration-none fw-bold" href="javascript:void(0)" onclick="showLess('{{post.id}}');">Show less</a>
+                        </span>
+                    </p>
+                    <p class="text-center">
+                        {% for photo in post.sample_photos %}
+                            <a href="javascript:void(0)" onclick="loadPhoto('{{photo.photo}}');" data-bs-toggle="modal" data-bs-target="#photoViewerModal"><img class="img img-responsive img-fluid" src="/media/{{photo.photo}}" alt="" style="width: 100px;"></a>
+                        {% endfor %}
+                    </p>
+                    <div class="container-fluid my-2">
+                        <div class="row">
+                            <div class="col-lg-4 text-center">
+                                {% if not request.user.is_authenticated %}
+                                    <a class="text-dark fw-bold" style="font-size: 14px;" href="javascript:void(0)" onclick="setNextPage('');" data-bs-toggle="modal" data-bs-target="#loginModal">Show your product</a>
+                                {% else %}
+                                    {% if post.user.id != request.user.id %}
+                                        <a class="text-dark fw-bold" style="font-size: 14px;" href="{% url 'show-create-seller-offer' post.post_code_name %}">Show your product</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-4 text-center">
+                                <span class="text-danger" style="font-size: 12px;">Deadline: {{post.deadline}}{% if post.deadline == 1 %} Day {% else %} Days {% endif %}</span>
+                            </div>
+                            <div class="col-lg-4 mt-1 text-center">
+                                {% if request.user.id == post.user.id %}
+                                    <a class="text-muted" style="font-size: 12px;" href="{% url 'my-post-wise-offers' post.post_code_name %}">{{post.offer_count}} {% if post.offer_count > 1 %}products{% else %}product{% endif %} shown</a>
+                                {% else %}
+                                    <span class="text-muted" style="font-size: 12px;">{{post.offer_count}} {% if post.offer_count > 1 %}products{% else %}product{% endif %} shown</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% include 'front-end/modals/signup-modal.html' %}
+        {% include 'front-end/modals/login-modal.html' %}
+        {% include 'front-end/modals/photo-viewer.html' %}
+{% endblock %}
+{% block script %}
+<script>
+    function showMore(post_id){
+        $('#id-show-more'+post_id).removeClass('d-none');
+        $('#id-show-less'+post_id).addClass('d-none');
+    }
+    function showLess(post_id){
+        $('#id-show-less'+post_id).removeClass('d-none');
+        $('#id-show-more'+post_id).addClass('d-none');
+    }
+    $('#id-signup-form').submit(function(e){
+        e.preventDefault();
+        $('#id-signup-btn-div').html('<span class="fst-italic text-muted">Processing...</span>');
+        var signup_form = $(this);
+        $.ajax(
+            {
+                url:"{% url 'sign-up' %}",
+                method:'POST',
+                data:signup_form.serialize(),
+                success:function(response){
+                    $('#id-signup-btn-div').html('<button class="form-control my-2 btn btn-dark">Sign Up</button>');
+                    console.log(response);
+                    console.log(JSON.parse(response));
+                    console.log(Object.keys(JSON.parse(response))[0]);
+                    var first_key = Object.keys(JSON.parse(response))[0];
+                    if(first_key == 'Success'){
+                        // location.reload();
+                        var url = JSON.parse(response).url;
+                        window.location.href = url;
+                    }
+                    else if(first_key == 'Wrong'){
+                        $('#id-error-msg').html("Something went wrong!");
+                    }
+                    else{
+                        msg = Object.values(JSON.parse(response))[0][0].message;
+                        $('#id-error-msg').html(msg);
+                    }
+                    // console.log(Object.values(JSON.parse(response))[0][0].message);
+                    // msg = Object.values(JSON.parse(response))[0][0].message
+                    // $('#id-error-msg').html(msg)
+                }
+            }
+        );
+    });
+
+    $('#id-login-form').submit(function(e){
+        e.preventDefault();
+        $('#id-login-btn-div').html('<span class="fst-italic text-muted">Processing...</span>');
+        var login_form = $(this);
+
+        $.ajax({
+            method:'POST',
+            url:"{% url 'log-in' %}",
+            data:login_form.serialize(),
+            success:function(response){
+                $('#id-login-btn-div').html('<button class="form-control my-2 btn btn-dark">Log In</button>');
+                console.log(JSON.parse(response));
+                var first_key = Object.keys(JSON.parse(response))[0];
+                if(first_key == 'Unverified'){
+                    $('#id-login-error').html('Your account has not been verified yet! To verify your account click <a class="text-dark" href="{% url 'send-verification-code' %}">here</a>');
+                }
+                else if(first_key == 'Success'){
+                    var next_page = $('#id-next-page').val();
+                    if(next_page == ''){
+                        location.reload();
+                    }
+                    else{
+                        window.location.href = next_page;
+                    }
+                }
+                else if(first_key == 'Invalid'){
+                    $('#id-login-error').html("Invalid email/password!");
+                }
+                else if(first_key == 'Wrong'){
+                    $('#id-login-error').html("Something went wrong!");
+                }
+                else{
+                    msg = Object.values(JSON.parse(response))[0][0].message;
+                    $('#id-login-error').html(msg);
+                }
+            }
+        });
+    });
+
+    function prodsByCat(slug){
+        // alert(slug.value);
+        location.href = slug.value;
+    }
+
+    function loadPhoto(img_link){
+        $('#id-viewer-photo').attr('src','/media/'+img_link);
+    }
+
+    function setNextPage(url){
+        // alert(url);
+        $('#id-next-page').val(url);
+    }
+</script>
+{% endblock %}

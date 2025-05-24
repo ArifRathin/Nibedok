@@ -1,0 +1,33 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <span class="h4">Post Details</span>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <p>
+                <span class="h4 text-capitalize">{{buyer_post.user.first_name}} {{buyer_post.user.last_name}}</span><br>
+                <span class="text-muted h6">{{buyer_post.created_at}}</span>
+            </p>
+            <p>
+                <span class="h4">{{buyer_post.title}}</span>
+            </p>
+            <p>
+                {% for photo in buyer_post.sample_photos %}
+                <a href="/media/{{photo.photo}}" target="_blank"><img src="/media/{{photo.photo}}" alt=""
+                        style="width: 80px;"></a>
+                {% endfor %}
+            </p>
+            <p>
+                {{buyer_post.description}}
+            </p>
+            <p>
+                For this post, <span class="fw-bold">{{buyer_post.offer_count}} People have shown their products to the
+                    customer</span>
+            </p>
+            <!-- <a class="form-control btn btn-dark" href="javascript:void(0)">Show Your Product to Customer</a> -->
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% for message in messages %}  
+    {% if forloop.first %}
+        <div class="id-load-prev-div text-center">
+            <a class="text-dark" href="javascript:void(0)" onclick="loadPrevMsg('{{message.id}}')">
+                Load previous messages...
+            </a>
+        </div>
+    {% endif %}
+    <div id="msg-serial-" class="mx-2 border rounded border-1 ps-1 mt-2">
+        {% if message.sender == current_user_id %}
+            <small class="fw-bold">{{current_user_name}} (You)</small>
+         {% else %}
+            <small class="fw-bold text-info">{{other_user_name}}</small>
+        {% endif %}
+        <p>{{message.text}}</p>
+        <p>
+            {% for photo in message.photos %}
+                <a class="text-decoration-none" href="/media/{{photo.photo}}" target="_blank">
+                    <img class="me-1" style="height: 50px;" src="/media/{{photo.photo}}">
+                </a>
+            {% endfor %}
+        </p>
+        <small id="id-status" style="font-size: 10px;">{{message.created_at}}</small>
+    </div>
+{% endfor %}

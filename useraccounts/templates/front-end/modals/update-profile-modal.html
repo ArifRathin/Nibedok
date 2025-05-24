@@ -1,0 +1,44 @@
+<div class="modal" id="updateProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+                <div class="text-center">
+                  <p id="id-profile-update-p" class="my-2"></p>
+                    <img id="id-profile-img" class="rounded-circle" src="\media\{{request.user.profile_photo}}" alt="" style="height: 100px; width: 100px;">
+                    <p class="mt-2">
+                      <label for="id-profile-photo"><a class="btn btn-sm btn-outline-dark">Change Photo</a></label>
+                    </p>
+                    </div>
+                    <div class="mt-1">
+                      <form id="id-profile-update-form" class="form-group py-2" action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input id="id-profile-photo" class="d-none" type="file" name="profile_photo">
+                        <input class="form-control mt-1" type="text" value="{{request.user.first_name}}" name="first_name">
+                        <input class="form-control mt-1" type="text" value="{{request.user.last_name}}" name="last_name">
+                        <div id="id-btn-div" class="my-2 text-center">
+                          <button class="form-control btn btn-dark mt-1">Update</button>
+                        </div>
+                      </form>
+                    </div>
+                <div class="mt-2 text-center">
+                    <a class="text-dark" href="{% url 'update-password' %}">Change Password</a>
+                </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="modal-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-6 text-center my-1">
+                <button id="id-dialog-close" type="button" class="form-control btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+              <div id="id-main-button-div" class="col-lg-6 text-center my-1">
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>

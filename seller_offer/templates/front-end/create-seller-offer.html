@@ -1,0 +1,156 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid my-3">
+    <div class="row text-center my-3">
+        {% for message in messages %}
+            <div class="col-lg-6 col-md-6 mx-auto">
+                {% if message.extra_tags == "success-sent" %}
+                    <div class="badge bg-success py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-post" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-msg-len" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-delivery-time" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-price" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-currency" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-photo-len" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-photo-format" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "warning-photo-size" %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == "failed" %}
+                    <div class="badge bg-danger py-4 w-100">
+                        {{message}}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row text-center">
+            <p>
+                <a class="text-dark h6" href="{% url 'buyer-post-details' buyer_post.post_code_name %}">{{buyer_post.title}}</a>
+            </p>
+    </div>
+    <div class="row my-1 text-center">
+        {% for photo in buyer_post.sample_photos %}
+            <a href="/media/{{photo.photo}}">
+                <img class="img img-fluid mx-2" src="/media/{{photo.photo}}" alt="" style="height:80px;">
+            </a>
+        {% endfor %}
+    </div>
+    <div class="row mt-3 mb-0 text-center">
+        <p class="mb-0">
+            <span class="h5">Show your product</span>
+        </p>
+    </div>
+    <div class="row">
+        <div class="col-lg-5 mx-auto">
+            <form id="id-offer-form" class="form-group mt-0" action="{% url 'create-seller-offer'  %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="post_code_name" value="{{buyer_post.post_code_name}}">
+                <textarea class="form-control my-3" name="offer_msg" id="" placeholder="Write about your product"></textarea>
+                <div class="text-center border border-2 rounded rounded-2 border-dark py-2">
+                    <div id="id-sample-div"></div>
+                    <label for="id-buyer-sample-photo"><span class="fw-bold">+Add Sample Photo(s) </span><span class="fst-italic fe-bold">(Optional)</span><br><span><small style="font-size: 12px;">(Max. 5 photos of 3MB each)</small></span></label>
+                    <input id="id-buyer-sample-photo" class="form-control d-none" type="file" multiple>
+                </div>
+                <div class="container">
+                    <div class="row my-3">
+                        <div class="col-lg-2 px-0">
+                            <input class="form-control" name="price" type="number" placeholder="Price">
+                        </div>
+                        <div class="col-lg-3">
+                            <select class="form-control" name="currency_id" id="">
+                                {% for currency in currencies %}
+                                    <option value="{{currency.id}}" {% if currency.code == 'BDT' %}selected{% endif %}>{{currency.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="container my-3">
+                    <div class="row">
+                        <div class="col-lg-6 px-0">
+                            <input class="form-control" name="estimated_delivery_time" type="number" placeholder="Estimated delivery time">
+                        </div>
+                        <div class="col-lg-2">
+                            <span>Days</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="id-btn-div" class="my-2 text-center">
+                    <button class="btn btn-dark form-control" onclick="waitProcessor();">Show product to customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    function waitProcessor(){
+        $('#id-btn-div').html('<span class="fst-italic text-muted">Processing...</span>');
+        $('#id-offer-form').submit();
+    }
+    var sample_photo = document.getElementById('id-buyer-sample-photo');
+    sample_photo.addEventListener('change',function(evnt){
+        var file_serial = 0;
+        var flag = true;
+        for(let i=0; i<sample_photo.files.length; i++){
+            var format = sample_photo.files[i].type.split("/")[1];
+            if(sample_photo.files.length > 5){
+                alert("Maximum 5 photos can be uploaded");
+                flag = false;
+                break;
+            }
+            if(format != 'jpeg' && format != 'jpg' && format != 'JPG' && format != 'JPEG' && format != 'png' && format != 'PNG'){
+                alert("File has to be a jpg/png image");
+                flag = false;
+                break;
+            }
+            if(sample_photo.files[i].size > 3*1024*1024){
+                alert("An image cannot exceed 3MB");
+                flag = false;
+                break;
+            }
+        }
+        if(flag){
+            for(let i=0; i<sample_photo.files.length; i++){
+                let img_file = sample_photo.files[i];
+                let img_reader = new FileReader();
+
+                img_reader.addEventListener('load',function(e){
+                    $('#id-sample-div').append('<span id="id-span-img'+file_serial+'"><span class="px-2" style="position:absolute;opacity:0.5;background-color:white;"><a href="javascript:void(0);" class="text-decoration-none text-dark" onclick="removeImage('+file_serial+')">X</a></span><img class="pe-2" id="id-img-preview'+file_serial+'" style="height:60px;" src="'+img_reader.result+'" alt=""><input name="img-str" class="preview-str form-control" id="id-msg-str'+file_serial+'" value="'+img_reader.result+'" type="hidden"></span>');
+                    file_serial += 1;
+                });
+                img_reader.readAsDataURL(img_file);
+            }
+        }
+    });
+    function removeImage(img_serial){
+        $('#id-span-img'+img_serial).remove();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Receiver Room
+        </title>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row bg-main-theme py-1">
+                <div class="col-4 col-sm-2 col-md-1 col-lg-1 col-xl-1 col-xxl-1 pt-1">
+                    <span class="fw-bold">Nibedok</span>
+                </div>
+                <div class="col-8 col-sm-10 col-md-11 col-lg-5 col-xl-5 col-xxl-5 ps-0">
+                    <input class="form-control" type="text" placeholder="Search for what people are lookign for">
+                </div>
+                <div class="col-4 col-lg-2 col-xl-2 col-xxl-2 text-center pt-1">
+                    <a class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)">Notifications</a>
+                </div>
+                <div class="col-4 col-lg-2 col-xl-2 col-xxl-2 text-center pt-1">
+                    <a class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)"><span>Inbox</span><span class="bg-dark text-white px-1 py-0 rounded-4"><small id="id-unread-count">0</small></span></a>
+                    <div id="id-inbox-conv-div" class="d-none bg-secondary-subtle rounded text-start px-2" style="position:absolute; z-index: auto; overflow-y: scroll; height: 300px; width: 400px;right:100px;"></div>
+                </div>
+                <div class="col-4 col-lg-2 col-xl-2 col-xxl-2 text-center pt-1">
+                    <!-- <a class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)">Profile</a> -->
+                    <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Profile
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Anonymous User</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Log Out</a></li>
+                      </ul>
+                </div>
+            </div>
+            <div class="row ps-2 pt-3 mb-2">
+                <h4>Conversation list</h4>
+                <div id="id-conv-div" class="col-lg-3 col-xl-3 col-xxl-3 px-0 pt-1 border rounded border-1 conversation-box overflow-auto">
+                    {% for conv in conversations %}
+                            {% if conv.person_one_group == request.user.channel_group_name %}
+                                <div class="conversation" id="{{conv.person_second_group}}">
+                            {% else %}
+                                <div class="conversation" id="{{conv.person_one_group}}">
+                            {% endif %}
+                            {% if conv.lastMessage.sender_group == request.user.channel_group_name %}
+                                <span class="h4">{{conv.lastMessage.receiverInfo.first_name}} {{conv.lastMessage.receiverInfo.last_name}}</span>
+                            {% else %}
+                                <span class="h4">{{conv.lastMessage.senderInfo.first_name}} {{conv.lastMessage.senderInfo.last_name}}</span>
+                            {% endif %}
+                            <Span><small>{{conv.last_message}}</small></Span>
+                            <p>
+                                {% if conv.lastMessage.sender_group == request.user.channel_group_name %}
+                                    <span>
+                                        {% if conv.lastMessage.photos %}
+                                            You: <i>Photo(s)</i>
+                                        {% else %}
+                                            You: {{conv.lastMessage.text}}
+                                        {% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="{% if conversation.convStatus.has_unread_msg %}fw-bold{% endif %}">
+                                        {% if conv.lastMessage.photos %}
+                                            You: <i>Photo(s)</i>
+                                        {% else %}
+                                            {{conv.lastMessage.text}}
+                                        {% endif %}
+                                    </span>
+                                {% endif %}
+                            </p>
+                            <hr>
+                        </div>
+                    {% endfor %}
+                    <div id="id-load-more-conv-left" class="text-center">
+                        <a href="javascript:void(0)" onclick="loadOlderConv();">Load more...</a>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-xl-7 col-xxl-7 pt-1">
+                    <div id="id-main-msg-frame" class="border rounded border-2 pb-2 msg-box overflow-auto">
+                        <div class="bg-main-theme ps-2"><span class="fw-bold text-capitalize">{{user.first_name}} {{user.last_name}}</span></div>
+                        <div class="prev-msg"></div>
+                        <div id="id-msg-frame">   
+                            {% for message in conversation.latestMessages %}  
+                                {% if forloop.first %}
+                                    <div class="id-load-prev-div text-center">
+                                        <a class="text-dark" href="javascript:void(0)" onclick="loadPrevMsg('{{message.id}}')">
+                                            Load previous messages...
+                                        </a>
+                                    </div>
+                                {% endif %}
+                                <div id="msg-serial-" class="mx-2 border rounded border-1 ps-1 mt-2">
+                                    {% if message.sender == request.user.id %}
+                                        <small class="fw-bold">{{request.user.first_name}} {{request.user.last_name}} (You)</small>
+                                    {% else %}
+                                        <small class="fw-bold text-info">{{user.first_name}} {{user.last_name}}</small>
+                                    {% endif %}
+                                    <p>{{message.text}}</p>
+                                    <p>
+                                        {% for photo in message.photos %}
+                                            <a href="/media/{{photo.photo}}" target="_blank">
+                                                <img class="me-1" style="height: 50px;" src="/media/{{photo.photo}}">
+                                            </a>
+                                        {% endfor %}
+                                    </p>
+                                    <small id="id-status" style="font-size: 10px;">{{message.created_at}}</small>
+                                </div>
+                            {% endfor %}                      
+                        </div>
+                    </div>
+                    <div class="mt-1">
+                        <form id="id-msg-form" class="form-group mt-2" action="">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div id="id-preview-div" class="col-lg-12">
+                                        
+                                    </div>
+                                </div>
+                                <div class="row pt-1">
+                                    <div class="col-2 col-lg-1 col-xl-1 col-xxl-1 ps-0 text-end">
+                                        <!-- <label>Image</label> -->
+                                        <label for="id-image-file" class="fa fa-image fa-2x text-secondary"></label>
+                                        <input class="d-none" id="id-image-file" type="file" multiple>
+                                    </div>
+                                    <div class="col-7 col-lg-10 col-xl-10 col-xxl-10 ps-0">
+                                        <textarea class="form-control" rows="1" name="" id="id-msg-text"></textarea>
+                                    </div>
+                                    <div id="id-send-btn" class="col-3 col-lg-1 col-xl-1 col-xxl-1 text-end ps-0">
+                                        <button type="submit" class="btn btn-sm btn-secondary">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+            document
+                .getElementById("id-msg-frame")
+                .scrollIntoView(false);
+        });
+        var ws = new WebSocket('ws://127.0.0.1:8000/ws/nibedok-message/');
+        var msg_serial = 1;
+        ws.onmessage = function(event){
+            response=JSON.parse(event.data);
+            console.log(response);
+            console.log(response.status);
+            if(response.status=='connected'){
+                $('#id-unread-count').html(response.unread_msg_count);
+                $('#id-inbox-conv-div').html(response.html);
+                ws.send(JSON.stringify({'task':'add_group'}));
+            }
+            else if(response.status=='msg_received'){
+                var msg_imgs = '';
+                for(let p=0; p<response.msg_img_arr.length; p++){
+                    msg_imgs += '<a target="_blank" class="text-decoration-none" href="/media/'+response.msg_img_arr[p]+'"><img class="me-1" style="height:50px;" src="/media/'+response.msg_img_arr[p]+'"></a>'
+                }
+                if('{{env}}'=='message_room'){
+                    if(response.sender_id == '{{user.id}}'){
+                        $('#id-conv-current').remove();
+                        $('#id-conv-div').prepend('<div id="id-conv-current"><span class="h4">'+response.sender_first_name+' '+response.sender_last_name+'</span><span><small>'+response.sent_at+'</small></span><p><span class="fw-bold">'+response.text+'</span></p><hr></div>');
+                        $('#id-msg-frame').append('<div id="msg-serial-'+msg_serial+'" class="mx-2 border rounded border-1 ps-1 mt-2"><small class="fw-bold text-info">{{user.first_name}} {{user.last_name}}</small><p>'+response.text+'</p><p>'+msg_imgs+'</p><small style="font-size:10px;" id="msg-id-status-'+response.msg_id+'">Arrived at '+response.sent_at+'</small></div>')
+                        msg_serial+=1
+                        document
+                        .getElementById("id-msg-frame")
+                        .scrollIntoView(false);
+                    }
+                    else{
+                        $('#id-conv-'+response.conversation_id).remove();
+                        $('#id-conv-div').prepend('<div id="id-conv-'+response.conversation_id+'"><span class="h4">'+response.sender_first_name+' '+response.sender_last_name+'</span><span><small>'+response.sent_at+'</small></span><p><span class="fw-bold">'+response.text+'</span></p><hr></div>');
+                    }
+                }
+                // ws.send(JSON.stringify({'task':'report_delivery','delivered_at':response.delivered_at,'msg_id':response.msg_id,'receiver_group':'{{user.channel_group_name}}'}));
+            }
+            else if(response.status=='sent'){
+                $('#id-status-'+response.msg_serial).remove();
+                console.log(response.msg_img_arr);
+                var i=0;
+                $(".img-"+response.msg_serial).each(function(){
+                    $(this).attr('href','/media/'+response.msg_img_arr[i]);
+                    i+=1;
+                });
+                $('#msg-serial-'+response.msg_serial).append('<small style="font-size:10px;" id="msg-id-status-'+response.msg_id+'">Sent at '+response.sent_at+'</small>');
+            }
+            // else if(response.status=='delivered'){
+            //     $('#msg-id-status-'+response.msg_id).html("Delivered at "+response.delivered_at);
+            // }
+            else if(response.status=='got_older_conv'){
+                console.log(response.conversations);
+                $('#id-load-more-conv-left').remove();
+                var load_conv_left_btn = ''
+                $.each(response.conversations, function(k, v){
+                    if($('#'+k)){
+                        console.log(k);
+                        console.log(v);
+                        var conv_with_name = v.name;
+                        if(v.conv_status){
+                            var text = '<p><span class="fw-bold">'+v.lastMessage+'</span></p>';
+                        }
+                        else{
+                            var text = '<p><span>'+v.lastMessage+'</span></p>';
+                        }
+                        load_conv_left_btn = '<div id="id-load-more-conv-left" class="text-center"><a href="javascript:void(0)" onclick="loadOlderConv();">Load more...</a></div>';
+                        var row = '<div class="conversation" id="'+k+'"><span class="h4">'+v.name+'</span><span><small>'+v.last_message+'</small></span>'+text+'</div><hr>';
+                        $('#id-conv-div').append(row);
+                    }
+                });
+                $('#id-conv-div').append(load_conv_left_btn);
+            }
+            else if(response.status=='got_prev_msg'){
+                $('.id-load-prev-div').remove();
+                $('#id-msg-frame').prepend(response.html);
+            }
+        }
+        var fileInput = document.getElementById('id-image-file');
+        var file_serial = 0;
+        // var obj=[];var reader=[];
+        fileInput.addEventListener('change', ev => {
+            ev.preventDefault();
+            for(var i=0; i<fileInput.files.length; i++){
+                let obj = fileInput.files[i]
+                console.log(obj);
+                let reader = new FileReader();
+                reader.addEventListener("load", function(e){
+                    // console.log(reader.result);
+                    // console.log(file_serial);
+                    $('#id-preview-div').append('<span id="id-span-img'+file_serial+'"><span class="px-2" style="position:absolute;opacity:0.5;background-color:white;"><a href="javascript:void(0);" class="text-decoration-none text-dark" onclick="removeImage('+file_serial+')">X</a></span><img class="pe-2" id="id-img-preview'+file_serial+'" style="height:60px;" src="'+reader.result+'" alt=""><input class="preview-str form-control" id="id-msg-str'+file_serial+'" value="'+reader.result+'" type="hidden"></span>');
+                    file_serial+=1;
+                    // console.log(reader.result);
+                });
+                reader.readAsDataURL(obj);
+            }
+        });
+        function removeImage(f_serial){
+            $('#id-span-img'+f_serial).remove();
+        }
+        $('#id-msg-form').submit(function(event){
+            event.preventDefault();
+            $('#id-send-btn').html('Sending...');
+            var msg_text = $('#id-msg-text').val();
+            var img_str = "";
+            var img_arr = [];
+            $('.preview-str').each(function(){
+                console.log($(this).val());
+                img_arr.push($(this).val());
+                img_str += '<a target="_blank" class="text-decoration-none img-'+msg_serial+'"><img class="me-1" style="height:50px;" src="'+$(this).val()+'"></a>';
+            });
+            $('#id-msg-frame').append('<div id="msg-serial-'+msg_serial+'" class="mx-2 border rounded border-1 ps-1 mt-2"><small class="fw-bold">{{request.user.first_name}} {{request.user.last_name}} (You)</small><p>'+msg_text+'</p><p>'+img_str+'</p><small id="id-status-'+msg_serial+'">Sent</small></div>')
+            document
+                .getElementById("id-msg-frame")
+                .scrollIntoView(false);
+            var msg_data = JSON.stringify({'task':'send_msg','msg_img':img_arr,'text':msg_text,'receiver':'{{user.id}}','receiver_group':'{{user.channel_group_name}}','msg_serial':msg_serial});
+            msg_serial+=1;
+            console.log(typeof(msg_data));
+            $('#{{user.channel_group_name}}').remove();
+            if($('#id-preview-div').children().length>0){
+                $('#id-conv-div').prepend('<div id="{{user.channel_group_name}}"><span class="h4">{{user.first_name}} {{user.last_name}}</span><span><small> now</small></span><p><span>You: <i>Photo(s)</i></span></p><hr></div>');
+            }
+            else{
+                $('#id-conv-div').prepend('<div id="{{user.channel_group_name}}"><span class="h4">{{user.first_name}} {{user.last_name}}</span><span><small> now</small></span><p><span>You: '+$('#id-msg-text').val()+'</span></p><hr></div>');
+            }
+            ws.send(msg_data);
+            $('#id-preview-div').html('');
+            $('#id-msg-text').val('');
+            $('#id-send-btn').html('<button type="submit" class="btn btn-sm btn-secondary">Send</button>');
+        });
+        function loadPrevMsg(first_msg_id){
+            alert(first_msg_id);
+            $('.id-load-prev-div').html('Loading...')
+            ws.send(JSON.stringify({'task':'load_prev_msg','first_msg_id':first_msg_id,'sender_group':'{{request.user.channel_group_name}}','receiver_group':'{{user.channel_group_name}}','current_user_id':'{{request.user.id}}','current_user_name':'{{request.user.first_name}} {{request.user.last_name}}','other_user_id':'{{user.id}}','other_user_name':'{{user.first_name}} {{user.last_name}}'}));
+        }
+        function loadOlderConv(){
+            // alert($('.conversation').length);
+            $('#id-load-more-conv-left').html('Loading...')
+            ws.send(JSON.stringify({'task':'load_older_conv','curr_conv_length':$('.conversation').length}));
+        }
+        // let objJsonStr = JSON.stringify(obj);
+        // let objJsonB64 = Buffer.from(objJsonStr).toString("base64");
+    </script>
+    </body>
+</html>

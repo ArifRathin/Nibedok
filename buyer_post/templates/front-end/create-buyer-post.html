@@ -1,0 +1,149 @@
+{% extends 'front-end/base.html' %}
+{% block title %}
+Create Post
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <div class="col-lg-6 col-md-6 mx-auto">
+            {% for message in messages %}
+            {% if message.extra_tags == 'success' %}
+            <div class="badge bg-success py-4 w-100">
+                {{message}}
+            </div>
+            {% elif message.extra_tags == 'warning-title' %}
+            <div class="badge bg-warning py-4 w-100">
+                {{message}}
+            </div>
+            {% elif message.extra_tags == 'warning-deadline' %}
+            <div class="badge bg-warning py-4 w-100">
+                {{message}}
+            </div>
+            {% elif message.extra_tags == 'warning-description' %}
+            <div class="badge bg-warning py-4 w-100">
+                {{message}}
+            </div>
+            {% elif message.extra_tags == 'warning-img' %}
+            <div class="badge bg-warning py-4 w-100">
+                {{message}}
+            </div>
+            {% elif message.extra_tags == 'warning-category' %}
+            <div class="badge bg-warning py-4 w-100">
+                {{message}}
+            </div>
+            {% elif message.extra_tags == 'failed' %}
+            <div class="badge bg-danger py-4 w-100">
+                {{message}}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row text-center mt-3">
+        <p>
+            <span class="h3">What product are you looking for?</span>
+        </p>
+    </div>
+    <div class="row">
+        <div class="col-lg-5 mx-auto">
+            <form id="id-post-form" class="form-group" action="{% url 'create-buyer-post' %}" method="POST"
+                enctype="multipart/form-data">
+                {% csrf_token %}
+                <input class="form-control my-3" name="title" type="text" placeholder="Name of the product">
+                <textarea class="form-control my-3" name="description" placeholder="Describe what you want"></textarea>
+                <div class="rounded border border-2 border-muted py-3 mb-2 text-center">
+                    <div id="id-prev-img-div"></div>
+                    <label for="id-sample-img" class="fw-bold text-dark fs-6">+Add sample photo(s) <small
+                            class="fst-italic">(optional)</small><br><small class="text-muted"
+                            style="font-size:12px;">(Max. 5 Photos of 3 MB each)</small></label>
+                    <input id="id-sample-img" class="d-none form-control my-3" name="photo" type="file" multiple="True">
+                </div>
+                <!-- <label for="">Location</label> -->
+                <!-- <select class="form-control my-3" name="" id="">
+                    <option value="">Select a country</option>
+                </select> -->
+                <!-- <input class="form-control my-3" type="text" placeholder="Write the name of your state/city/region"> -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label for="">Deadline</label>
+                            <select class="form-control my-3" name="deadline" id="">
+                                <option value=1>1 Day</option>
+                                <option value=2>2 Days</option>
+                                <option value=3>3 Days</option>
+                                <option value=4>4 Days</option>
+                                <option value=5>5 Days</option>
+                                <option value=6>6 Days</option>
+                                <option value=7>7 Days</option>
+                                <option value=10>10 Days</option>
+                                <option value=14>14 Days</option>
+                                <option value=15>15 Days</option>
+                                <option value=21>21 Days</option>
+                                <option value=28>28 Days</option>
+                                <option value=30>30 Days</option>
+                                <option value=31>31 Days</option>
+                                <option value=40>40 Days</option>
+                                <option value=60>60 Days</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="">Category</label>
+                            <select class="form-control my-3" name="category" id="">
+                                {% for category in categories %}
+                                <option value="{{category.id}}">{{category.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="id-btn-div" class="my-2 text-center">
+                    <button type="submit" class="form-control btn btn-dark" onclick="waitProcessor()">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    function waitProcessor() {
+        $('#id-btn-div').html('<span class="fst-italic text-muted">Processing...</span>');
+        $('#id-post-form').submit();
+    }
+    var sampleImg = document.getElementById('id-sample-img');
+    sampleImg.addEventListener('change', function (evnt) {
+        evnt.preventDefault();
+        var fileSerial = 0;
+        var flag = true;
+        for (let i = 0; i < sampleImg.files.length; i++) {
+            var format = sampleImg.files[i].type.split("/")[1];
+            if (format != 'jpeg' && format != 'jpg' && format != 'JPG' && format != 'JPEG' && format != 'png' && format != 'PNG') {
+                alert("File has to be a jpg/png image");
+                flag = false;
+                break;
+            }
+            if (sampleImg.files[i].size > 3 * 1024 * 1024) {
+                alert("An image cannot exceed 3MB");
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            for (let i = 0; i < sampleImg.files.length; i++) {
+                var img = sampleImg.files[i];
+                let reader = new FileReader();
+                reader.addEventListener('load', function (e) {
+                    $('#id-prev-img-div').append('<span id="id-span-img' + fileSerial + '"><span class="px-2" style="position:absolute;opacity:0.5;background-color:white;"><a href="javascript:void(0);" class="text-decoration-none text-dark" onclick="removeImage(' + fileSerial + ')">X</a></span><img class="pe-2" id="id-img-preview' + fileSerial + '" style="height:60px;" src="' + reader.result + '" alt=""><input name="img-str" class="preview-str form-control" id="id-msg-str' + fileSerial + '" value="' + reader.result + '" type="hidden"></span>');
+                    fileSerial += 1
+                });
+                reader.readAsDataURL(img);
+            }
+        }
+    });
+
+    function removeImage(f_serial) {
+        $('#id-span-img' + f_serial).remove();
+        $('#id-msg-str' + f_serial).remove();
+    }
+</script>
+{% endblock %}

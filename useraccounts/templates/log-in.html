@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>Log in</title>
+    </head>
+    <body>
+        <div>
+            <form action="{% url 'log-in' %}" method="POST" novalidate>
+                {% csrf_token %}
+                {{form}}
+            <input type="submit" value="Log In">
+            </form>
+        </div>
+    </body>
+</html>

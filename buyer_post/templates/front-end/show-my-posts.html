@@ -1,0 +1,121 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <span class="h3">My Posts</span>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <table class="table table-striped">
+                <thead>
+                    <th>Photo</th>
+                    <th>Product</th>
+                    <th>Products Shown</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    {% for post in my_posts %}
+                    <tr id="id-post{{post.post_code_name}}">
+                        <td>
+                            {% for photo in post.sample_photos|slice:':1' %}
+                            <a class="text-dark" href="{% url 'buyer-post-details' post.post_code_name %}">
+                                <img src="/media/{{ photo.photo }}" alt="" style="width: 80px;">
+                            </a>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a class="text-dark"
+                                href="{% url 'buyer-post-details' post.post_code_name %}"><span>{{post.title}}</span></a>
+                        </td>
+                        <td>
+                            <a class="text-dark"
+                                href="{% url 'my-post-wise-offers' post.post_code_name %}">{{post.offer_count}}</a>
+                        </td>
+                        <td>
+                            <span id="id-publishing-span{{post.post_code_name}}"><a class="btn btn-sm btn-warning"
+                                    href="javascript:void(0)"
+                                    onclick="execDialog('{{post.post_code_name}}','{{post.publishing_url}}','publishing')">{%
+                                    if post.if_published %}Unpublish{% else %}Publish{% endif %}</a></span>
+                            <span id="id-del-span{{post.post_code_name}}" data-post-id="{{post.post_code_name}}"><a
+                                    class="btn btn-sm btn-danger" href="javascript:void(0)"
+                                    onclick="setDialog('Are you sure you want to delete this post?','{{post.post_code_name}}','{{post.delete_url}}')"
+                                    data-bs-toggle="modal" data-bs-target="#delModal">Delete</a></span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if my_posts|length > 9 %}
+    <div class="row">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if my_posts.has_previous %}
+                <li class="page-item"><a class="page-link text-dark"
+                        href="?page={{my_posts.previous_page_number}}">Previous</a></li>
+                {% endif %}
+                {% if my_posts.has_previous %}
+                <li class="page-item"><a class="page-link text-dark"
+                        href="?page={{my_posts.previous_page_number}}">{{my_posts.previous_page_number}}</a></li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link bg-dark border border-dark"
+                        href="?page={{my_posts.number}}">{{my_posts.number}}</a></li>
+                {% if my_posts.has_next %}
+                <li class="page-item"><a class="page-link text-dark"
+                        href="?page={{my_posts.next_page_number}}">{{my_posts.next_page_number}}</a></li>
+                {% endif %}
+                {% if my_posts.has_next %}
+                <li class="page-item"><a class="page-link text-dark" href="?page={{my_posts.next_page_number}}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% include 'front-end/modals/del-modal.html' %}
+{% endblock %}
+{% block script %}
+<script>
+    function setDialog(txt, post_code_name, url) {
+        $('#id-dialog-text').text(txt);
+        $('#id-main-button-div').html('<a type="button" class="form-control btn btn-danger" onclick="execDialog(\'' + post_code_name + '\',\'' + url + '\',\'del\')">Delete</a>')
+    }
+    function execDialog(post_code_name, url, task = "") {
+        // alert(url);
+        // alert(post_code_name);
+        if (task == 'del') {
+            $('#id-dialog-close').click();
+            $('#id-del-span' + post_code_name).html('Processing...');
+        }
+        else if (task == 'publishing') {
+            $('#id-publishing-span' + post_code_name).html('Processing...');
+        }
+        $.ajax({
+            method: 'GET',
+            url: url,
+            success: function (res) {
+                if (task == 'del') {
+                    console.log(res);
+                    if (res == 'success') {
+                        $('#id-post' + post_code_name).remove();
+                    }
+                    else {
+                        $('#id-del-span' + post_code_name).html('<a class="text-danger" href="javascript:void(0)" onclick="setDialog(\'Are you sure you want to delete this post?\',' + url + ')" data-bs-toggle="modal" data-bs-target="#dialogModal">Delete</a>');
+                    }
+                }
+                else if (task == 'publishing') {
+                    if (res == true) {
+                        $('#id-publishing-span' + post_code_name).html('<a class="btn btn-sm btn-warning" href="javascript:void(0)" onclick="execDialog(\'' + post_code_name + '\',\'' + url + '\',\'publishing\')">Unpublish</a>');
+
+                    }
+                    else {
+                        $('#id-publishing-span' + post_code_name).html('<a class="btn btn-sm btn-warning" href="javascript:void(0)" onclick="execDialog(\'' + post_code_name + '\',\'' + url + '\',\'publishing\')">Publish</a>');
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

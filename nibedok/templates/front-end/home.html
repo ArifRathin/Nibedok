@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+<div class="mt-2 text-center" style="height: 100px;background-color: #8B0000;">
+            <p class="mb-1"><small class="fst-italic text-white">Post what you are looking for...</small></p>
+            <button class="btn btn-light fw-bold">I am looking for...</button>
+        </div>
+        <div class="container-fluid my-3">
+            <div class="row text-center mb-3">
+                <span class="h1">People are looking for...</span>
+            </div>
+            <div class="row">
+                <div class="col-lg-5 mx-auto rounded border border-2 border-dark">
+                    <p class="fw-bold mb-1">John Doe<br>
+                        <small class="fst-italic text-muted" style="font-size: 12px;">Dhaka, Bangladesh</small>
+                    </p>
+                    <p class="text-center h5">
+                        I want this/that
+                    </p>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    </p>
+                    <img class="img img-responsive img-fluid" src="media/buyer_sample_photos/manzil.jpg" alt="" style="width: 100px;">
+                    <img class="img img-responsive img-fluid" src="media/buyer_sample_photos/manzil.jpg" alt="" style="width: 100px;">
+                    <img class="img img-responsive img-fluid" src="media/buyer_sample_photos/manzil.jpg" alt="" style="width: 100px;">
+                    <img class="img img-responsive img-fluid" src="media/buyer_sample_photos/manzil.jpg" alt="" style="width: 100px;">
+                    <img class="img img-responsive img-fluid" src="media/buyer_sample_photos/manzil.jpg" alt="" style="width: 100px;">
+                    <div class="container-fluid my-2">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <a class="text-dark fw-bold" href="javascript:void(0)">Show your product</a>
+                            </div>
+                            <div class="col-lg-6 text-center">
+                                <span class="mt-1 text-muted" style="font-size: 12px;">23 products shown</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signupModal">
+            Launch demo modal
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <div class="text-center">
+                    <span class="h5">Sign Up</span>
+                  </div>
+                  <div class="py-2">
+                    <form class="form-group" action="">
+                        <input class="form-control my-2" type="text" placeholder="Please enter your email">
+                        <input class="form-control my-2" type="password" placeholder="Please enter your password">
+                        <input class="form-control my-2" type="password" placeholder="Please retype your password">
+                        <button class="form-control my-2 btn btn-dark">Sign Up</button>
+                    </form>
+                    <div class="text-center">
+                        <span>Already signed up?</span><a class="fw-bold" href="javascript:void(0)">Log In</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+            Launch demo modal
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <div class="text-center">
+                    <span class="h5">Log In</span>
+                  </div>
+                  <div class="py-2">
+                    <form class="form-group" action="">
+                        <input class="form-control my-2" type="text" placeholder="Please enter your email">
+                        <input class="form-control my-2" type="password" placeholder="Please enter your password">
+                        <button class="form-control my-2 btn btn-dark">Log In</button>
+                    </form>
+                    <div class="text-center">
+                        <span>Not signed up yet? </span><a class="fw-bold text-dark" href="javascript:void(0)">Sign Up</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+

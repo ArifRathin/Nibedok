@@ -1,0 +1,59 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <span class="h3">Offers by me</span>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <table class="table table-striped">
+                <thead>
+                    <th>Product</th>
+                    <th>My Offer</th>
+                    <th>Price</th>
+                    <th>Delivery Time</th>
+                </thead>
+                <tbody>
+                    {% for offer in offers %}
+                        <tr>
+                            <td>
+                                <a class="text-dark" href="{% url 'buyer-post-details' offer.buyer_post.post_code_name %}"><span>{{offer.buyer_post.title}}</span></a>
+                            </td>
+                            <td>
+                                <a class="text-dark" href="{% url 'offered-prod-details' offer.offer_code_name %}">{{offer.offer_msg}}</a>
+                            </td>
+                            <td>
+                                <span>{{offer.price}}</span>
+                            </td>
+                            <td>
+                                <span>{{offer.estimated_delivery_time}}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% if offers|length > 9 %}
+        <div class="row">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                      {% if offers.has_previous %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{offers.previous_page_number}}">Previous</a></li>
+                      {% endif %}
+                      {% if offers.has_previous %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{offers.previous_page_number}}">{{offers.previous_page_number}}</a></li>
+                      {% endif %}
+                      <li class="page-item active"><a class="page-link bg-dark border border-dark" href="?page={{offers.number}}">{{offers.number}}</a></li>
+                      {% if offers.has_next %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{offers.next_page_number}}">{{offers.next_page_number}}</a></li>
+                      {% endif %}
+                      {% if offers.has_next %}
+                        <li class="page-item"><a class="page-link text-dark" href="?page={{offers.next_page_number}}">Next</a></li>
+                      {% endif %}
+                    </ul>
+                  </nav>
+        </div>
+    {% endif %}
+{% endblock %}

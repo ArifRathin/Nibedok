@@ -1,0 +1,28 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row text-center my-3">
+        <span class="h3">Notifications</span>
+    </div>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <table class="table table-striped">
+                <tbody>
+                    {% for notification in notifications %}
+                        <tr>
+                            <td>
+                                <a class="text-dark fw-bold text-decoration-none" href="{% url 'my-post-wise-offers' notification.post_code_name %}">{{notification.notif_msg}}</a>
+                            </td>
+                            <td>
+                                <a class="text-dark text-decoration-none" href="javascript:void(0)">
+                                    <small style="font-size:12px;">{{notification.updated_at}}</small>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

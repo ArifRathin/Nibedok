@@ -1,0 +1,112 @@
+.bg-main-theme{
+    background-color: #cd6155;
+}
+/* msg-box height 712
+conversation box height 800
+prev msg height 600 */
+@media(max-width: 992px) {
+    .msg-box{
+        height: 450px;
+    }
+    .conversation-box{
+        height:200px;
+        margin-bottom: 10px;
+    }
+    .prev-msg{
+        height: 350px;
+    }
+    .notif-list-box{
+        position: absolute;
+        height: 300px; 
+        width: 305px;
+        /* right: 450px;  */
+        z-index: 5; 
+        overflow-y: scroll;
+    }  
+}
+@media(max-width: 393px) {
+    .conv-list-box{
+        position:absolute; 
+        z-index: auto; 
+        overflow-y: scroll; 
+        height: 300px; 
+        width: 305px;
+        right:10px;
+    }
+}
+@media(min-width: 393px) and (max-width: 600px) {
+    .conv-list-box{
+        position:absolute; 
+        z-index: auto; 
+        overflow-y: scroll; 
+        height: 300px; 
+        width: 305px;
+        right:120px;
+    }
+}
+@media(min-width: 600px) and (max-width: 800px) {
+    .conv-list-box{
+        position:absolute; 
+        z-index: auto; 
+        overflow-y: scroll; 
+        height: 300px; 
+        width: 405px;
+        right:150px;
+    }
+}
+@media(min-width: 800px) and (max-width: 992px) {
+    .conv-list-box{
+        position:absolute; 
+        z-index: auto; 
+        overflow-y: scroll; 
+        height: 300px; 
+        width: 455px;
+        right:180px;
+    }
+}
+@media(min-width: 992px) and (max-width: 1919px) {
+    .msg-box{
+        height: 450px;
+    }
+    .conversation-box{
+        height:500px
+    }
+    .prev-msg{
+        height: 350px;
+    }
+    .notif-list-box{
+        position: absolute;
+        height: 200px; 
+        width: 455px;
+        right: 200px; 
+        z-index: 5; 
+        overflow-y: scroll;
+    }
+    .conv-list-box{
+        position:absolute; 
+        z-index: auto; 
+        overflow-y: scroll; 
+        height: 300px; 
+        width: 455px;
+        right:50px;
+    }
+}
+@media(min-width: 1920px) {
+    .msg-box{
+        height: 943px;
+    }
+    .conversation-box{
+        height:1012px
+    }
+    .prev-msg{
+        height: 833px;
+    }
+    .notif-list-box{
+        position: absolute;
+        height: 400px; 
+        width: 500px;
+        /* right: 450px;  */
+        z-index: 5; 
+        overflow-y: scroll;
+    }
+}

@@ -1,0 +1,32 @@
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="text-center">
+            <span id="id-login-error" class="badge bg-danger"></span>
+          </div>
+          <div class="text-center">
+            <span class="h5">Log In</span>
+          </div>
+          <div class="py-2">
+            <form id="id-login-form" class="form-group" action="">
+                {% csrf_token %}
+                <input id="id-next-page" type="hidden">
+                {{ log_in_form }}
+                <!-- <input class="form-control my-2" type="text" placeholder="Please enter your email">
+                <input class="form-control my-2" type="password" placeholder="Please enter your password"> -->
+                <div id="id-login-btn-div" class="my-2 text-center">
+                  <button class="form-control my-2 btn btn-dark">Log In</button>
+                </div>
+            </form>
+            <div class="text-center">
+                <span>Not signed up yet? </span><a class="fw-bold text-dark" href="javascript:void(0)">Sign Up</a>
+                <p class="mt-2">
+                  <a class="fw-bold text-dark" href="{% url 'send-password-change-code' %}" style="font-size: 12px;">Forgot password?</a>
+                </p>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

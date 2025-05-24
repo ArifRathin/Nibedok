@@ -1,0 +1,129 @@
+{% load static %}
+<html>
+    <head>
+        <title>
+            {% block title %}
+            {% endblock %}
+        </title>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row bg-main-theme py-1">
+                <div class="col-4 col-sm-2 col-md-2 col-lg-1 col-xl-1 col-xxl-1 pt-1" style="transform: rotate(-12deg)">
+                    <a class="fw-bold text-dark text-decoration-none fst-italic" href="{% url 'home' %}">Nibedok</a>
+                </div>
+                <div class="col-8 col-sm-10 col-md-10 col-lg-5 col-xl-5 col-xxl-5 ps-0">
+                    <form id="id-search-form" class="my-0" action="{% url 'search-results' %}" method="GET">
+                        <input id="id-search-input" class="form-control" name="keywords" type="text" placeholder="Search Posts" autocomplete="off">
+                    </form>
+                    <div id="id-search-div" style="position:absolute; width: inherit;opacity: 5;z-index: 4;" class="bg-secondary-subtle rounded-2 d-none py-1">
+                    </div>
+                </div>
+                {% if request.user.is_authenticated %}
+                    <div class="col-4 col-lg-2 col-xl-2 col-xxl-2 text-center pt-1">
+                        <a id="id-notification-link" class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)"><i class="fa fa-bell fa-2x text-dark"></i><sup><span class="rounded-circle badge bg-dark" id="id-notif-span"></span></sup></a>
+                        <div id="id-notification-div" class="bg-secondary-subtle rounded-2 text-start d-none notif-list-box" style="z-index: 5;">
+                            <p class="ps-2"><span class="h3">Notifications</span></p>
+                            <div id="id-notif-msg-div"></div>
+                            <p class="ps-2 text-center">
+                                <a class="text-dark" href="{% url 'all-notifications' %}">All Notifications</a> 
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-4 col-lg-2 col-xl-2 col-xxl-2 text-center pt-1">
+                        <a id="id-inbox-link" class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)"><i class="fa fa-envelope fa-2x"></i><sup><span id="id-unread-count" class="badge bg-dark rounded-circle"></span></sup></a>
+                        <div id="id-inbox-conv-div" class="bg-secondary-subtle rounded text-start px-2 d-none conv-list-box" style="z-index: 5;"></div>
+                    </div>
+                    <div class="col-4 col-lg-2 col-xl-2 col-xxl-2 text-center pt-1">
+                        <!-- <a class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)">Profile</a> -->
+                        <a class="nav-link dropdown-toggle fw-bold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-user fa-2x"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-capitalize" href="{% url 'profile' request.user.channel_group_name %}">{{request.user.first_name}} {{request.user.last_name}}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'log-out' %}">Log Out</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="col-6 col-lg-3 col-xl-3 col-xxl-3 pt-1 text-center">
+                        <a class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#signupModal">
+                            Sign Up
+                        </a>
+                    </div>
+                    <div class="col-6 col-lg-3 col-xl-3 col-xxl-3 pt-1 text-center">
+                        <a class=" text-decoration-none text-dark fw-bold" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            Log In
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+{% block content %}
+{% endblock %}
+<script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/notification.js' %}"></script>
+{% if env != 'message_room' %}
+    <script type="text/javascript" src="{% static 'js/inbox.js' %}"></script>
+{% endif %}
+<!-- <script type="text/javascript" src="{% static 'js/search.js' %}"></script> -->
+<script>
+    function submitSearch(){
+    // alert("Search");
+    $('#id-search-form').submit();
+}
+$('#id-search-input').click(function(e){
+    $('#id-search-div').removeClass('d-none');
+});
+var search_input_len = 0;
+$('#id-search-input').keyup(function(evnt){
+    search_input_len = $(this).val().length;
+    var keyw = $(this).val();
+    // alert(search_input_len,keyw);
+    if(evnt.keyCode == 8){
+        // alert(search_input_len,keyw);
+    }
+    if(search_input_len >= 3){
+        $.ajax({
+            method:'GET',
+            data:{'keywords':keyw},
+            url:"{% url 'search-results-suggestions' %}",
+            success:function(response){
+                var response_arr = JSON.parse(response);
+                console.log(response_arr.results.length);
+                $('#id-search-div').html('');
+                var res_link = '';
+                for(let i=0; i<response_arr.results.length; i++){
+                    res_link += '<p class="my-1"><a class="ms-2 fw-bold text-dark text-decoration-none" href="'+response_arr.results[i].url+'">'+response_arr.results[i].title+'</a></p><hr>'
+                }
+                $('#id-search-div').append(res_link);
+                $('#id-search-div').append('<p class="text-center my-1"><a class="text-dark" href="javascript:void(0);" onclick="submitSearch()">See More...</a></p>');
+            }
+        });
+    }
+    else{
+        $('#id-search-div').html('');
+    }
+});
+    $(document).mousedown(function(event){
+        // alert("Clicked");
+        if(!$('#id-search-div').is(event.target) && $('#id-search-div').has(event.target).length === 0){
+            $('#id-search-div').addClass('d-none');
+        }
+        if(!$('#id-notification-div').is(event.target) && $('#id-notification-div').has(event.target).length === 0){
+            $('#id-notification-div').addClass('d-none');
+        }
+        if(!$('#id-inbox-conv-div').is(event.target) && $('#id-inbox-conv-div').has(event.target).length === 0){
+            $('#id-inbox-conv-div').addClass('d-none');
+        }
+    });
+</script>
+{% block script %}
+{% endblock %}
+</body>
+</html>

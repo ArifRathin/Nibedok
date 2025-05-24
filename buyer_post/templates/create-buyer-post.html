@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>
+            Create Buyer Post
+        </title>
+    </head>
+    <body>
+        <div>
+            <form action="{% url 'create-buyer-post' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{sample_photo_form}}
+                {{create_form}}
+                {{prod_cat_form}}
+                <input type="submit" value="Post">
+            </form>
+        </div>
+    </body>
+</html>

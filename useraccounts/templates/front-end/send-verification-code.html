@@ -1,0 +1,48 @@
+{% extends 'front-end/base.html' %}
+{% block content %}
+<div class="container-fluid my-3">
+    <div class="row text-center my-3">
+        <div class="col-lg-6 col-md-6 mx-auto">
+            {% for message in messages %}
+                {% if message.extra_tags == 'warning-user' %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == 'warning-account' %}
+                    <div class="badge bg-warning py-4 w-100">
+                        {{message}}
+                    </div>
+                {% elif message.extra_tags == 'error' %}
+                    <div class="badge bg-error py-4 w-100">
+                        {{message}}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row my-1 text-center">
+        <p>
+            <span class="h5">Enter your email. We will send a verification code to your email.</span>
+        </p>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 mx-auto px-3">
+            <form id="id-send-verif-code-form" class="form-group" action="{% url 'send-verification-code' %}" method="POST">
+                {% csrf_token %}
+                <input class="form-control my-2" type="text" name="email">
+                <div id="id-send-verif-code-btn-div" class="my-2 text-center">
+                    <button class="btn btn-dark form-control" onclick="processBtn();">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    function processBtn(){
+        $('#id-send-verif-code-btn-div').html('<span class="fst-italic text-muted">Processing...</span>');
+        $('#id-send-verif-code-form').submit();
+    }
+</script>
+{% endblock %}

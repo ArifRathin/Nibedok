@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <title>
+            Conversation
+        </title>
+    </head>
+    <body>
+        <div>
+            <h1>Conversation page</h1>
+            <div id="id-msg-box"></div>
+            <input type="file" class="class-msg-photos">
+            <input type="file" class="class-msg-photos">
+            <input id="id-msg" type="text">
+            <button type="button" onclick="sendMessage()">Send</button>
+        </div>
+    </body>
+    <script>
+        var response = false;
+        wsSender = new WebSocket('ws://127.0.0.1:8000/ws/nibedok-message/');
+        wsSender.onmessage = function(event){
+            var status = JSON.parse(event.data).status;
+            console.log("top "+status);
+            if(status=="connected"){
+                send_data = {'task':'add_name','name':'{{user.channel_group_name}}'};
+                console.log(send_data)
+                wsSender.send(JSON.stringify(send_data))
+            }
+            else if(status=='positive'){
+                response = true;
+                console.log(response);
+            }
+            else if(status=='msg-received'){
+                document.getElementById('id-msg-box').append(JSON.parse(event.data).msg);
+            }
+        }
+        function sendMessage(){
+            text = document.getElementById('id-msg').value;
+            console.log(text);
+            var f = document.getElementsByClassName('class-msg-photos');
+            for(let i=0; i<f.length;i++){
+                console.log(f[i].value)
+            }
+
+            // send_data = {'task':'send_msg','name':'{{user.channel_group_name}}','receiver_id':'{{user.id}}','text':text};
+            // wsSender.send(JSON.stringify(send_data));
+        }
+
+        var wsReceiver = new WebSocket('ws://127.0.0.1:8000/ws/nibedok-message/');
+
+        wsReceiver.onmessage = function(event){
+            var status = JSON.parse(event.data).status
+            console.log("got "+status);
+            if(status=="connected"){
+                send_data = {'task':'add_name','name':'{{request.user.channel_group_name}}'};
+                console.log(send_data)
+                wsReceiver.send(JSON.stringify(send_data))
+            }
+            else if(status=='positive'){
+                response = true;
+                console.log(response);
+            }
+            else if(status=='msg-received'){
+                console.log("Got message.")
+                document.getElementById('id-msg-box').append(JSON.parse(event.data).msg);
+            }
+        }
+    </script>
+</html>
