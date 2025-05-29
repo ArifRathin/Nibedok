@@ -7,7 +7,9 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <p>
-                <span class="h4 text-capitalize">{{buyer_post.user.first_name}} {{buyer_post.user.last_name}}</span><br>
+                {% if request.user.id == buyer_post.user.id %}
+                    <span class="h4 text-capitalize">{{buyer_post.user.first_name}} {{buyer_post.user.last_name}}</span><br>
+                {% endif %}
                 <span class="text-muted h6">{{buyer_post.created_at}}</span>
             </p>
             <p>
