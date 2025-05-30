@@ -137,11 +137,14 @@ USE_TZ = True
 
 STATIC_ROOT = normpath(join(BASE_DIR, 'staticfiles'))
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR,'static'
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR,'static'
+# ]
+STATICFILES_DIRS = (
+    normpath(join(BASE_DIR, 'static')),
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -156,7 +159,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            # "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("nibedok-redis-3vrzgs.serverless.eun1.cache.amazonaws.com", 6379)],
         },
     },
 }
@@ -170,5 +174,6 @@ EMAIL_HOST_PASSWORD = "omcevrvteokwqvkq"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+# CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = 'redis://nibedok-redis-3vrzgs.serverless.eun1.cache.amazonaws.com:6379/0'
 CELERY_TIMEZONE = 'Asia/Dhaka'
