@@ -6,7 +6,7 @@ $('#id-inbox-link').click(function(e){
 });
 
 // var ws = new WebSocket('ws://127.0.0.1:8000/ws/nibedok-message/');
-var ws = new WebSocket('ws://16.171.41.180:8001/ws/nibedok-message/');
+var ws = new WebSocket('ws://16.171.41.180:80/ws/nibedok-message/');
 
 ws.onmessage = function(event){
     response=JSON.parse(event.data);
