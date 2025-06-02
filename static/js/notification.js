@@ -3,7 +3,7 @@ $('#id-notification-link').click(function(e){
     $('#id-notification-div').removeClass('d-none');
 });
 // var notif_inbox_ws = new WebSocket('ws://127.0.0.1:8000/ws/nibedok-notification-inbox/');
-var notif_inbox_ws = new WebSocket('ws://16.171.41.180:80/ws/nibedok-notification-inbox/');
+var notif_inbox_ws = new WebSocket('ws://16.171.41.180:8001/ws/nibedok-notification-inbox/');
 
 function updateNotifRead(){
     // alert("Update Notif");
