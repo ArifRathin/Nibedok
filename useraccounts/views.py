@@ -26,17 +26,18 @@ def signUp(request):
                 try:
                     user = User.objects.create_user(email = email, first_name=first_name, last_name=last_name, password=password)
                     user.channel_group_name = f'{uuid4().hex}_{user.id}_23322332'
-                    security_code = mail_manager.genSecurityCode()
-                    print(security_code)
+                    # security_code = mail_manager.genSecurityCode()
+                    # print(security_code)
                     # mail_manager.sendSecurityCodeMail(email=email,security_code=security_code,subj="Nibedok Account Verification Email")
-                    user.security_code = user.password
-                    user.set_password(security_code)
-                    user.security_code_generated = True
+                    # user.security_code = user.password
+                    # user.set_password(security_code)
+                    # user.security_code_generated = True
                     user.save()
-                    mailer.delay(email,security_code,"Nibedok Account Verification Email")
-                    url = reverse('show-verify-account-page',kwargs={'email':email})
-                    print(url)
-                    status = json.dumps({'Success':True, 'url':url})
+                    # mailer.delay(email,security_code,"Nibedok Account Verification Email")
+                    # url = reverse('show-verify-account-page',kwargs={'email':email})
+                    # print(url)
+                    # status = json.dumps({'Success':True, 'url':url})
+                    status = json.dumps({'Success':True, 'url':'home'})
                     return JsonResponse(status, safe=False)
                 except Exception as err:
                     status = json.dumps({'Wrong':err})
