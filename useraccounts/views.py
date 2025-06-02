@@ -136,8 +136,9 @@ def logIn(request):
                 else:
                     status = json.dumps({'Invalid':True})
                     return JsonResponse(status, safe=False)
-            except:
-                status = json.dumps({'Wrong':True})
+            except Exception as e:
+                # status = json.dumps({'Wrong':True})
+                status = json.dumps({'Wrong':str(e)})
                 return JsonResponse(status, safe=False)
         else:
             return JsonResponse(logInForm.errors.as_json(), safe=False)

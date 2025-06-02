@@ -148,6 +148,7 @@ Home
             url:"{% url 'log-in' %}",
             data:login_form.serialize(),
             success:function(response){
+                console.log(response);
                 $('#id-login-btn-div').html('<button class="form-control my-2 btn btn-dark">Log In</button>');
                 console.log(JSON.parse(response));
                 var first_key = Object.keys(JSON.parse(response))[0];
