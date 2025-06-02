@@ -35,9 +35,10 @@ def signUp(request):
                     user.save()
                     # mailer.delay(email,security_code,"Nibedok Account Verification Email")
                     # url = reverse('show-verify-account-page',kwargs={'email':email})
+                    url = reverse('home',kwargs={'email':email})
                     # print(url)
                     # status = json.dumps({'Success':True, 'url':url})
-                    status = json.dumps({'Success':True, 'url':'home'})
+                    status = json.dumps({'Success':True, 'url':url})
                     return JsonResponse(status, safe=False)
                 except Exception as err:
                     status = json.dumps({'Wrong':err})
