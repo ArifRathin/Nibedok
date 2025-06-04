@@ -161,7 +161,8 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             # "hosts": [("127.0.0.1", 6379)],
-            "hosts": [("nibedok-redis-3vrzgs.serverless.eun1.cache.amazonaws.com", 6379)],
+            "hosts": [("16.171.41.180", 6379)],
+            # "hosts": [("nibedok-redis-3vrzgs.serverless.eun1.cache.amazonaws.com", 6379)],
         },
     },
 }
@@ -176,5 +177,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_BROKER_URL = 'redis://nibedok-redis-3vrzgs.serverless.eun1.cache.amazonaws.com:6379/0'
+CELERY_BROKER_URL = 'redis://16.171.41.180:6379/0'
+# CELERY_BROKER_URL = 'redis://nibedok-redis-3vrzgs.serverless.eun1.cache.amazonaws.com:6379/0'
 CELERY_TIMEZONE = 'Asia/Dhaka'

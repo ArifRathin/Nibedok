@@ -25,17 +25,17 @@ class Notification(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-# @receiver(post_save, sender=Notification)
-# def save(sender, instance, **kwargs):
-#     if instance.if_read is False:
-#         group_name = instance.notif_for.channel_group_name
-#         data={
-#             'status':'updated_notif',
-#             'id':instance.id,
-#             'msg':instance.notif_msg,
-#             'url':reverse('my-post-wise-offers',kwargs={'post_code_name':instance.post_code_name})
+@receiver(post_save, sender=Notification)
+def save(sender, instance, **kwargs):
+    if instance.if_read is False:
+        group_name = instance.notif_for.channel_group_name
+        data={
+            'status':'updated_notif',
+            'id':instance.id,
+            'msg':instance.notif_msg,
+            'url':reverse('my-post-wise-offers',kwargs={'post_code_name':instance.post_code_name})
     
-#         }
-#         async_to_sync(get_channel_layer().group_send)(
-#             group_name, {'type':'send_notification','text':json.dumps(data, default=str)}
-#         )
+        }
+        async_to_sync(get_channel_layer().group_send)(
+            group_name, {'type':'send_notification','text':json.dumps(data, default=str)}
+        )
