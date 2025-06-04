@@ -94,7 +94,7 @@ def createSellerOffer(request):
                 messages.success(request,"Successfully sent!", extra_tags="success-sent")
                 return redirect("show-create-seller-offer",post_code_name)
         except Exception as e:
-            # return HttpResponse(str(e))
+            return HttpResponse(str(e))
             messages.error(request, "Something went wrong. Please check your input values.", extra_tags="failed")
             return redirect("show-create-seller-offer",post_code_name)
         
