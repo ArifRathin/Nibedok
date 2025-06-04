@@ -41,6 +41,7 @@ def signUp(request):
                     status = json.dumps({'Success':True, 'url':url})
                     return JsonResponse(status, safe=False)
                 except Exception as err:
+                    print("Error here",str(err))
                     status = json.dumps({'Wrong':err})
                     return JsonResponse(status, safe=False)
 
