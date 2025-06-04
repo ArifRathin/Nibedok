@@ -132,7 +132,8 @@
         unread_msg_count = 0;
         $('#id-unread-count').html('');
     });
-    var ws = new WebSocket('ws://127.0.0.1:8000/ws/nibedok-message/');
+    // var ws = new WebSocket('ws://127.0.0.1:8000/ws/nibedok-message/');
+    var ws = new WebSocket('ws://http://16.171.41.180:9001/ws/nibedok-message/');
     var msg_serial = 1;
     ws.onmessage = function (event) {
         response = JSON.parse(event.data);
