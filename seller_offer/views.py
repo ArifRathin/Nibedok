@@ -30,7 +30,7 @@ def createSellerOffer(request):
     if offers_count_today >= 3:
         return render(request, 'front-end/offer-limit.html')
     if request.method == 'POST':
-        try:
+        # try:
             post_code_name = request.POST.get('post_code_name')
             post_exists = BuyerPost.objects.filter(post_code_name=post_code_name).exists()
             if not post_exists:
@@ -93,8 +93,8 @@ def createSellerOffer(request):
                     Notification.objects.create(post_code_name=post_code_name,notif_for=seller_offer.buyer_post.user,type=notif_type,notif_msg=notif_msg,total_offers=1)
                 messages.success(request,"Successfully sent!", extra_tags="success-sent")
                 return redirect("show-create-seller-offer",post_code_name)
-        except Exception as e:
-            return HttpResponse(str(e))
+        # except Exception as e:
+            # return HttpResponse(str(e))
             # messages.error(request, "Something went wrong. Please check your input values.", extra_tags="failed")
             # return redirect("show-create-seller-offer",post_code_name)
         
